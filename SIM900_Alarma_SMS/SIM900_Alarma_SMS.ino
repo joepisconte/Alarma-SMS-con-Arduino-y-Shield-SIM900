@@ -6,7 +6,7 @@
 #define PIN_RX    8
 #define BAUDRATE  9600
 #define MESSAGE_LENGTH 160
-#define PHONE_NUMBER "949716721" // Especificamos el número de celular 9******** al cual se enviará el SMS.
+#define PHONE_NUMBER "9********" // Especificamos el número de celular 9******** al cual se enviará el SMS.
 #define MESSAGE  "Alarma Activada!!!" // Especificamos el text del mensaje que se enviará.
 
 char message[MESSAGE_LENGTH];

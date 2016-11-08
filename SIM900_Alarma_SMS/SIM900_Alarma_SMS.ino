@@ -2,9 +2,9 @@
 #include <SoftwareSerial.h>
 #include <Wire.h>
 
-#define PIN_TX    7
-#define PIN_RX    8
-#define BAUDRATE  9600
+#define PIN_TX    7  
+#define PIN_RX    8  
+#define BAUDRATE  115200
 #define MESSAGE_LENGTH 160
 #define PHONE_NUMBER "9********" // Especificamos el número de celular 9******** al cual se enviará el SMS.
 #define MESSAGE  "Alarma Activada!!!" // Especificamos el text del mensaje que se enviará.
@@ -14,27 +14,33 @@ int messageIndex = 0;
 char phone[16];
 char datetime[24];
 
-boolean SensorPIR;
-boolean Alarma;
+int relays[4]={A0,A1,A2,A3};
+int PIR = 10;
+
+boolean Alarma=0;
 
 GPRS gprsTest(PIN_TX,PIN_RX,BAUDRATE); //Especificamos los pines del Arduino a los cuales se han conectado el RX,TX,PWR y BaudRate del SIM900.
 
 void setup() {
-  pinMode(9,INPUT); // Especificamos el Pin como entrada para leer el sensor PIR
-  Serial.begin(9600);
+  pinMode(10,INPUT); // Especificamos el Pin como entrada para leer el sensor PIR
+  for (int i =0; i<4;i++){
+    pinMode(relays[i],OUTPUT);
+    digitalWrite(relays[i],HIGH);
+  }
+  Serial.begin(115200);
   while(!gprsTest.init()) {
       Serial.print("Error al inicializar SIM900. Verificar conexiones\r\n");
       delay(1000);
   }
   delay(1000);  
-  Serial.println("SIM900 inicializado de manera satisfactoria!");
+  Serial.println("SIM900 OK!");
 }
 
 void loop() {
-  SensorPIR = digitalRead(9);
-  if (SensorPIR == 1 && Alarma == 0){
+  if (digitalRead(PIR) == 1 && Alarma == 0){
+    digitalWrite(relays[0],LOW); //Activamos Relay de Sirena
     EnviarSMS();
-    Alarma == 1; //activamos alarma.
+    Alarma = 1; //activamos alarma.
   }
   LeerSMS();  
 }
@@ -87,13 +93,14 @@ void AnalizarTramaSMS(char Trama[]){
             { 
               switch(Datos[i]){
                 case '1':
-                    digitalWrite(i+2,LOW); //Encendemos los relays conectados a los pines 2, 3, 4 y 5.
+                    digitalWrite(relays[i],LOW); //Encendemos los relays conectados a los pines 2, 3, 4 y 5.
                 break;
                 case '0':
                   if (i==0){
                     Alarma = 0; //desactiva la alarma
+                    digitalWrite(relays[i],HIGH);
                   }else{
-                    digitalWrite(i+2,HIGH); //Apagamos los relays conectados a los pines 2, 3, 4 y 5.
+                    digitalWrite(relays[i],HIGH); //Apagamos los relays conectados a los pines 2, 3, 4 y 5.
                   }
                 break;
               }

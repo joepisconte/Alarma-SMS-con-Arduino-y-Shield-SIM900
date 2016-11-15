@@ -1,7 +1,8 @@
 ## Alarma SMS con Arduino UNO y Shield SIM900
 
 Alarma SMS monitoreada con Shield SIM900 y Arduino UNO.
-Envía un SMS con el mensaje "Alarma Activada" en el momento que el sensor PIR conectado en el PIN 10 es activado.
+
+El Arduino envía un SMS con el mensaje "Alarma Activada" en el momento que el sensor PIR (conectado al pin 10) es activado.
 
 Además permite desactivar la alarma enviando un SMS con la trama: 0,0,0,0$
 
